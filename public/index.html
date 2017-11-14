@@ -1,0 +1,101 @@
+<!doctype html>
+<html>
+
+<head>
+  <title>React Primer - Vote</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <meta name="author" content="Cade B. Ward" />
+  <meta name="forkedFrom" content="Thomas A. Valletta" />
+  <style>
+    @font-face {
+      font-family: 'fira_codeBold';
+      src: url('css/font/firacode_bold_macroman/FiraCode-Bold-webfont.woff') format('woff');
+      font-weight: normal;
+      font-style: normal;
+    }
+
+    html,
+    body {
+      background-color: black;
+      height: 100%;
+      margin: 0;
+      font-family: 'fira_codeBold';
+      text-shadow: 0 0 5px white;
+    }
+
+    .container {
+      opacity: 0;
+      transition: opacity .5s ease-in-out;
+      height: 100%;
+      width: 100%;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .row {
+      flex: 1;
+      display: flex;
+    }
+
+    .cell {
+      border: 1px solid black;
+      flex: 1 0 auto;
+      font-size: 4em;
+      display: flex;
+      align-items: center;
+      border-radius: 3px;
+      text-decoration: none;
+      color: black;
+    }
+
+    .cell span {
+      text-align: center;
+      width: 100%;
+    }
+
+    .red {
+      background-color: red
+    }
+
+    .green {
+      background-color: green
+    }
+  </style>
+  <script type='text/javascript' src="/socket.io/socket.io.js"></script>
+  <script>
+    const socket = io()
+    socket.on('ack', () => {
+      console.log('ack')
+      document.querySelector('.container').style.opacity = 1
+      socket.emit('register', 'voter')
+    })
+    socket.on('reconnecting', () => {
+      document.querySelector('.container').style.opacity = 0.1
+    })
+    socket.on('reconnect', () => {
+      document.querySelector('.container').style.opacity = 1
+    })
+    function vote(value) {
+      socket.emit('vote', value, (data) => {
+        console.log(data)
+      })
+    }
+  </script>
+</head>
+
+<body>
+  <div class="container">
+    <div class="row">
+      <a href="#" onclick="vote('boring')" class="cell red">
+        <span>BORING</span>
+      </a>
+    </div>
+    <div class="row">
+      <a href="#" onclick="vote('more')" class="cell green">
+        <span>Please teach me more</span>
+      </a>
+    </div>
+  </div>
+</body>
+
+</html>
